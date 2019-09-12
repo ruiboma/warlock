@@ -17,14 +17,9 @@ var (
 	AcquireError = errors.New("Exceeding the big wait time, you can fix this error by setting the overflow cap or increasing the maximum capacity of the cap.")
 )
 
-// todo
-// When the maximum capacity is reached, it will enter the black hole of frequent establishment and destruction of links,
-// which will consume a lot of resources.
-type Health struct {
-}
 type closeFunc func()
 
-type pool struct {
+type Pool struct {
 	config      *config.Config
 	mlock       sync.Mutex
 	conns       chan *grpc.ClientConn
@@ -33,10 +28,10 @@ type pool struct {
 	ops         []grpc.DialOption
 }
 
-func NewWarlock(c *config.Config, ops ...grpc.DialOption) (*pool, error) {
+func NewWarlock(c *config.Config, ops ...grpc.DialOption) (*Pool, error) {
 	conns := make(chan *grpc.ClientConn, c.MaxCap)
 	factory := clientfactory.NewPoolFactory(c)
-	pool := &pool{config: c, conns: conns, factory: factory, ops: ops}
+	pool := &Pool{config: c, conns: conns, factory: factory, ops: ops}
 	err := factory.InitConn(conns, ops...)
 	if err != nil {
 		return nil, err
@@ -46,13 +41,13 @@ func NewWarlock(c *config.Config, ops ...grpc.DialOption) (*pool, error) {
 
 }
 
-func (w *pool) usagelock(add int) {
+func (w *Pool) usagelock(add int) {
 	w.mlock.Lock()
 	defer w.mlock.Unlock()
 	w.usageAmount += add
 }
 
-func (w *pool) Acquire() (*grpc.ClientConn, closeFunc, error) {
+func (w *Pool) Acquire() (*grpc.ClientConn, closeFunc, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), w.config.AcquireTimeout*time.Second)
 	defer cancel()
 	for {
@@ -89,7 +84,7 @@ func (w *pool) Acquire() (*grpc.ClientConn, closeFunc, error) {
 
 }
 
-func (w *pool) Close(client *grpc.ClientConn) {
+func (w *Pool) Close(client *grpc.ClientConn) {
 	go func() {
 		detect, _ := w.factory.Passivate(client)
 		if detect == true {
@@ -108,6 +103,6 @@ func (w *pool) Close(client *grpc.ClientConn) {
 }
 
 // Return to the use of resources in the pool
-func (w *pool) Getstat() (used, surplus int) {
+func (w *Pool) Getstat() (used, surplus int) {
 	return w.usageAmount, len(w.conns)
 }
