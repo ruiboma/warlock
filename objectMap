@@ -1,0 +1,10 @@
+ObjectPool
+对象池，存储和管理出入
+PoolConfig
+池属性关系
+
+ObjectFactory
+对象工厂，在需要的时候创建对象实例
+
+ClientObject*
+池对象，这里使用grpc 原生client
