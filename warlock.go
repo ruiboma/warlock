@@ -5,8 +5,10 @@ import (
 	"errors"
 	"sync"
 	"time"
-	"warlock/clientfactory"
-	"warlock/config"
+
+	"github.com/ruiboma/warlock/config"
+
+	"github.com/ruiboma/warlock/clientfactory"
 
 	"google.golang.org/grpc"
 )
