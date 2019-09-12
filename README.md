@@ -35,33 +35,27 @@ import (
 
 func main() {
 	cfg := config.NewConfig()
-	// Maximum number of connections, But this number may be exceeded during the run, use configuration(OverflowCap = false) to avoid overflow,
-	// if you need to strictly limit the number of connections
 	cfg.MaxCap = 100
 	cfg.ServerAdds = &[]string{"127.0.0.1:50051"}
 
 	pool, err := warlock.NewWarlock(cfg, grpc.WithInsecure())
 
-	if err != nil {
-		panic(err)
-	}
+
+
 	conn, close, err := pool.Acquire()
 	defer close()                // It is recommended to use this, please do not use conn.Close because this will lead to waste
 
 
-    if err != nil {
-		panic(err)
-	}
 
 
-
-
-
-	used, free := pool.Getstat() // Can view usage and free quantities
-	fmt.Println(used, free)
 	c := pb.NewYourClient(conn)
 	r, err := c.YourRPCFunc(ctx,balabala..)
     ...
+
+
+    used, free := pool.Getstat() // Can view usage and free quantities
+    // Maximum number of connections, But this number may be exceeded during the run, use configuration(OverflowCap = false) to avoid overflow,
+	// if you need to strictly limit the number of connections
 ```
 
 # License
