@@ -19,7 +19,7 @@ warlock:    https://godoc.org/github.com/ruiboma/warlock \
 clientFactory:    https://godoc.org/github.com/ruiboma/warlock/clientfactory
 
 # HOW TO USE
-```
+```go
 package main
 
 import (
@@ -54,8 +54,10 @@ func main() {
 
 
     used, free := pool.Getstat() // Can view usage and free quantities
-    // Maximum number of connections, But this number may be exceeded during the run, use configuration(OverflowCap = false) to avoid overflow,
-	// if you need to strictly limit the number of connections
+    /*
+    *Maximum number of connections, But this number may be exceeded during the run, use configuration(OverflowCap = false) to avoid overflow,
+    *if you need to strictly limit the number of connections
+    */
 ```
 
 # License
