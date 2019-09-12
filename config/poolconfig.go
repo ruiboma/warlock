@@ -10,8 +10,6 @@ type Config struct {
 	lock           sync.RWMutex
 	ServerAdds     *[]string
 	MaxCap         int
-	ReadTimeout    time.Duration
-	WriteTimeout   time.Duration
 	DynamicLink    bool
 	OverflowCap    bool
 	AcquireTimeout time.Duration

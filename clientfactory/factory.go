@@ -5,8 +5,8 @@ import (
 	"errors"
 	"strings"
 	"time"
-	"warlock/config"
 
+	"github.com/ruiboma/warlock/config"
 	"google.golang.org/grpc"
 )
 
