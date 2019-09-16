@@ -1,14 +1,14 @@
 # warlock -- grpc client Connection pool
 [![Build Status](https://travis-ci.com/ruiboma/warlock.svg?branch=master)](https://travis-ci.com/ruiboma/warlock)
-[![GoDoc](https://godoc.org/github.com/ruiboma/warlock?status.svg)](https://godoc.org/github.com/ruiboma/warlock)
 [![LICENSE](https://img.shields.io/badge/licence-Apache%202.0-brightgreen.svg?style=flat-square)](https://github.com/ruiboma/warlock/blob/master/LICENSE)
-[![GoDoc](https://godoc.org/github.com/ruiboma/warlock/clientfactory?status.svg)](https://godoc.org/github.com/ruiboma/warlock/clientfactory)
+[![GoDoc](https://godoc.org/github.com/ruiboma/warlock?status.svg)](https://godoc.org/github.com/ruiboma/warlock)
+<!-- [![GoDoc](https://godoc.org/github.com/ruiboma/warlock/clientfactory?status.svg)](https://godoc.org/github.com/ruiboma/warlock/clientfactory) -->
 [![Open Source Helpers](https://www.codetriage.com/ruiboma/warlock/badges/users.svg)](https://www.codetriage.com/ruiboma/warlock)
 
 **This is the golang grpc client connection pool tool**
 
 # Project Maturity
-This project is very young, its function is relatively simple, the basic api will not have more changes.
+This project function is relatively simple, the basic api will not have more changes.
 They will be discussed on Github issues along with any bugs or enhancements
 
 # Goals
@@ -19,6 +19,9 @@ warlock:    https://godoc.org/github.com/ruiboma/warlock \
 clientFactory:    https://godoc.org/github.com/ruiboma/warlock/clientfactory
 
 # HOW TO USE
+```shell
+go get gopkg.in/ruiboma/warlock.v1
+```
 ```go
 package main
 
@@ -26,8 +29,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/ruiboma/warlock"
-	"github.com/ruiboma/warlock/config"
+	"gopkg.in/ruiboma/warlock.v1"
+	"gopkg.in/ruiboma/warlock.v1/config"
 
 	"google.golang.org/grpc"
 	pb "github.com/ruiboma/examples/helloworld/helloworld"
