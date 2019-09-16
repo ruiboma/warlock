@@ -114,10 +114,8 @@ func (w *Pool) Getstat() (used, surplus int) {
 func (w *Pool) ClearPool() {
 	w.mlock.Lock()
 	defer w.mlock.Unlock()
-	go func() {
 	for client := range w.conns {
 		w.factory.Destroy(client)
 	}
-	}()
 
 }
