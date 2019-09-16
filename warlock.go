@@ -27,7 +27,6 @@ type Pool struct {
 	factory     *clientfactory.PoolFactory
 	usageAmount int
 	ops         []grpc.DialOption
-	Clear       func()
 }
 
 func NewWarlock(c *config.Config, ops ...grpc.DialOption) (*Pool, error) {
