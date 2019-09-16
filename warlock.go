@@ -48,6 +48,7 @@ func (w *Pool) usagelock(add int) {
 	w.usageAmount += add
 }
 
+//  Fishing a usable link from the pool
 func (w *Pool) Acquire() (*grpc.ClientConn, closeFunc, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), w.config.AcquireTimeout*time.Second)
 	defer cancel()
@@ -85,6 +86,7 @@ func (w *Pool) Acquire() (*grpc.ClientConn, closeFunc, error) {
 
 }
 
+// Recycling available links
 func (w *Pool) Close(client *grpc.ClientConn) {
 	go func() {
 		detect, _ := w.factory.Passivate(client)
@@ -106,4 +108,16 @@ func (w *Pool) Close(client *grpc.ClientConn) {
 // Return to the use of resources in the pool
 func (w *Pool) Getstat() (used, surplus int) {
 	return w.usageAmount, len(w.conns)
+}
+
+// If you want to end the program, don't forget it
+func (w *Pool) ClearPool() {
+	w.mlock.Lock()
+	defer w.mlock.Unlock()
+	go func() {
+		for client := range w.conns {
+			w.factory.Destroy(client)
+		}
+	}()
+
 }
