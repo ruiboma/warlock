@@ -20,7 +20,7 @@ clientFactory:    https://godoc.org/github.com/ruiboma/warlock/clientfactory
 
 # HOW TO USE
 ```shell
-go get gopkg.in/ruiboma/warlock.v1
+go get github.com/ruiboma/warlock
 ```
 ```go
 package main
@@ -29,8 +29,8 @@ import (
 	"context"
 	"fmt"
 
-	"gopkg.in/ruiboma/warlock.v1"
-	"gopkg.in/ruiboma/warlock.v1/config"
+	"github.com/ruiboma/warlock"
+	"github.com/ruiboma/warlock/config"
 
 	"google.golang.org/grpc"
 	pb "github.com/ruiboma/examples/helloworld/helloworld"
