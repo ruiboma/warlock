@@ -9,14 +9,14 @@
 
 # Project Maturity
 This project function is relatively simple, the basic api will not have more changes.
-They will be discussed on Github issues along with any bugs or enhancements
+They will be discussed on [Github issues](https://github.com/ruiboma/warlock/issues) along with any bugs or enhancements
 
 # Goals
 Provide a few interfaces, as efficient, stable and flexible as possible. May join the load balancing related module in the future and increase the availability of the connection
 
 # Doc
-warlock:    https://godoc.org/github.com/ruiboma/warlock \
-clientFactory:    https://godoc.org/github.com/ruiboma/warlock/clientfactory
+[warlock](https://godoc.org/github.com/ruiboma/warlock)\
+[clientFactory](https://godoc.org/github.com/ruiboma/warlock/clientfactory)
 
 # HOW TO USE
 ```shell
@@ -64,4 +64,4 @@ func main() {
 ```
 
 # License
-*BSD 2 clause - see LICENSE for more details.*
+*BSD 2 clause - see [LICENSE](https://github.com/ruiboma/warlock/blob/master/LICENSE) for more details.*
