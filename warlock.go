@@ -18,7 +18,7 @@ var (
 	AcquireError = errors.New("Exceeding the big wait time, you can fix this error by setting the overflow cap or increasing the maximum capacity of the cap.")
 )
 
-type closeFunc func()
+type CloseFunc func()
 
 type Pool struct {
 	config      *config.Config
@@ -49,7 +49,7 @@ func (w *Pool) usagelock(add int) {
 }
 
 //  Fishing a usable link from the pool
-func (w *Pool) Acquire() (*grpc.ClientConn, closeFunc, error) {
+func (w *Pool) Acquire() (*grpc.ClientConn, CloseFunc, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), w.config.AcquireTimeout*time.Second)
 	defer cancel()
 	for {
