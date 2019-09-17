@@ -19,6 +19,12 @@ var (
 )
 
 type CloseFunc func()
+type ChanStat int
+
+const (
+	isClose ChanStat = iota
+	isOpen
+)
 
 type Pool struct {
 	config      *config.Config
@@ -27,6 +33,16 @@ type Pool struct {
 	factory     *clientfactory.PoolFactory
 	usageAmount int
 	ops         []grpc.DialOption
+	ChannelStat ChanStat
+}
+
+func NewConfig() *config.Config {
+	c := &config.Config{}
+	c.MaxCap = 10
+	c.DynamicLink = true
+	c.OverflowCap = true
+	c.AcquireTimeout = 3 * time.Second
+	return c
 }
 
 func NewWarlock(c *config.Config, ops ...grpc.DialOption) (*Pool, error) {
@@ -90,7 +106,7 @@ func (w *Pool) Acquire() (*grpc.ClientConn, CloseFunc, error) {
 func (w *Pool) Close(client *grpc.ClientConn) {
 	go func() {
 		detect, _ := w.factory.Passivate(client)
-		if detect == true {
+		if detect == true && w.ChannelStat == isOpen {
 			ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 			defer cancel()
 			select {
@@ -114,6 +130,8 @@ func (w *Pool) Getstat() (used, surplus int) {
 func (w *Pool) ClearPool() {
 	w.mlock.Lock()
 	defer w.mlock.Unlock()
+	w.ChannelStat = isClose
+	close(w.conns)
 	for client := range w.conns {
 		w.factory.Destroy(client)
 	}

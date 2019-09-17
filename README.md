@@ -28,38 +28,54 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
+	"os"
+	"time"
 
 	"github.com/ruiboma/warlock"
-	"github.com/ruiboma/warlock/config"
 
 	"google.golang.org/grpc"
-	pb "github.com/ruiboma/examples/helloworld/helloworld"
+	pb "google.golang.org/grpc/examples/helloworld/helloworld"
+)
+
+const (
+	address = "localhost:50051"
 )
 
 func main() {
-	cfg := config.NewConfig()
+
+	cfg := warlock.NewConfig()
 	cfg.MaxCap = 100
+	cfg.OverflowCap = true
+	// This configuration may cause the existing link to exceed the total number set.
+	// If it overflows for a long time, you need to consider increasing the value of cap.
 	cfg.ServerAdds = &[]string{"127.0.0.1:50051"}
-
 	pool, err := warlock.NewWarlock(cfg, grpc.WithInsecure())
+	defer pool.ClearPool()  // Close all existing links with the pool before exiting the program
 
-
-
+	if err != nil {
+		panic(err)
+	}
 	conn, close, err := pool.Acquire()
-	defer close()                // It is recommended to use this, please do not use conn.Close because this will lead to waste
+	defer close()  // It is recommended to use this, or use  <pool.Close(conn)> func
+
+	if err != nil {
+		panic(err)
+	}
+	
 
 
 
-
-	c := pb.NewYourClient(conn)
+	c := pb.NewYourClient(conn)S
 	r, err := c.YourRPCFunc(ctx,balabala..)
     ...
 
 
-    used, free := pool.Getstat() // Can view usage and free quantities
+
     /*
-    *Maximum number of connections, But this number may be exceeded during the run, use configuration(OverflowCap = false) to avoid overflow,
-    *if you need to strictly limit the number of connections
+    *	used, free := pool.Getstat() // Can view usage and free quantities
+	*	
+    *
     */
 ```
 

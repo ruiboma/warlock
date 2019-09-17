@@ -19,15 +19,6 @@ func init() {
 	rand.Seed(time.Now().Unix())
 }
 
-func NewConfig() *Config {
-	c := &Config{}
-	c.MaxCap = 10
-	c.DynamicLink = true
-	c.OverflowCap = true
-	c.AcquireTimeout = 3 * time.Second
-	return c
-}
-
 func (c *Config) GetTarget() string {
 	c.lock.RLock()
 	defer c.lock.RUnlock()
