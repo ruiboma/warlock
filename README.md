@@ -8,6 +8,7 @@
 **This is the golang grpc client connection pool tool**
 
 # Project Maturity
+Complete link state detection mechanism Every link obtained is efficient.
 This project function is relatively simple, the basic api will not have more changes.
 They will be discussed on [Github issues](https://github.com/ruiboma/warlock/issues) along with any bugs or enhancements
 
@@ -26,14 +27,7 @@ go get github.com/ruiboma/warlock
 package main
 
 import (
-	"context"
-	"fmt"
-	"log"
-	"os"
-	"time"
-
 	"github.com/ruiboma/warlock"
-
 	"google.golang.org/grpc"
 	pb "google.golang.org/grpc/examples/helloworld/helloworld"
 )
@@ -46,26 +40,22 @@ func main() {
 
 	cfg := warlock.NewConfig()
 	cfg.MaxCap = 100
-	cfg.OverflowCap = true
-	// This configuration may cause the existing link to exceed the total number set.
-	// If it overflows for a long time, you need to consider increasing the value of cap.
+	cfg.OverflowCap = true      
 	cfg.ServerAdds = &[]string{"127.0.0.1:50051"}
+
+
 	pool, err := warlock.NewWarlock(cfg, grpc.WithInsecure())
-	defer pool.ClearPool()  // Close all existing links with the pool before exiting the program
+	defer pool.ClearPool()
 
-	if err != nil {
-		panic(err)
-	}
+
 	conn, close, err := pool.Acquire()
-	defer close()  // It is recommended to use this, or use  <pool.Close(conn)> func
+	defer close()
 
-	if err != nil {
-		panic(err)
-	}
+
 	
 
 
-
+	// start use
 	c := pb.NewYourClient(conn)S
 	r, err := c.YourRPCFunc(ctx,balabala..)
     ...
@@ -73,9 +63,10 @@ func main() {
 
 
     /*
-    *	used, free := pool.Getstat() // Can view usage and free quantities
-	*	
-    *
+	used, free := pool.Getstat() // Can view usage and free quantities
+	cfg.OverflowCap = true  This configuration may cause the existing link to exceed the total number set.If it overflows for a long time you need to consider increasing the value of cap.
+	defer pool.ClearPool()  // Close all existing links with the pool before exiting the program
+	defer close()  // It is recommended to use this, or use  <pool.Close(conn)> func
     */
 ```
 
