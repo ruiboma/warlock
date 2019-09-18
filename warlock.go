@@ -16,6 +16,7 @@ import (
 
 var (
 	AcquireError = errors.New("Exceeding the big wait time, you can fix this error by setting the overflow cap or increasing the maximum capacity of the cap.")
+	TimeoutError = errors.New("warlock: Connection timed out, check the address configuration or network status.")
 )
 
 type CloseFunc func()
@@ -39,7 +40,7 @@ type Pool struct {
 func NewConfig() *config.Config {
 	c := &config.Config{}
 	c.MaxCap = 10
-	c.DynamicLink = true
+	c.DynamicLink = false
 	c.OverflowCap = true
 	c.AcquireTimeout = 3 * time.Second
 	return c
@@ -48,7 +49,7 @@ func NewConfig() *config.Config {
 func NewWarlock(c *config.Config, ops ...grpc.DialOption) (*Pool, error) {
 	conns := make(chan *grpc.ClientConn, c.MaxCap)
 	factory := clientfactory.NewPoolFactory(c)
-	pool := &Pool{config: c, conns: conns, factory: factory, ops: ops}
+	pool := &Pool{config: c, conns: conns, factory: factory, ops: ops, ChannelStat: 1}
 	err := factory.InitConn(conns, ops...)
 	if err != nil {
 		return nil, err
@@ -90,8 +91,12 @@ func (w *Pool) Acquire() (*grpc.ClientConn, CloseFunc, error) {
 			if w.config.OverflowCap == false && w.usageAmount >= w.config.MaxCap {
 				continue
 			} else {
-				clientconn, err := w.factory.MakeConn(w.config.GetTarget(), w.ops...)
+				Wops := append(w.ops, grpc.WithBlock())
+				clientconn, err := w.factory.MakeConn(w.config.GetTarget(), Wops...)
 				if err != nil {
+					if err == context.DeadlineExceeded {
+						return nil, nil, TimeoutError
+					}
 					return nil, nil, err
 				}
 				w.usagelock(1)

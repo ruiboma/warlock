@@ -59,3 +59,35 @@ func TestAcquire(t *testing.T) {
 	}
 
 }
+
+func TestClose(t *testing.T) {
+	cfg := warlock.NewConfig()
+	cfg.ServerAdds = &[]string{"127.0.0.1:50051"}
+	tp, err := warlock.NewWarlock(cfg, grpc.WithInsecure())
+	if err != nil {
+		t.Fatal(err)
+	}
+	tConn, close, err := tp.Acquire()
+	defer close()
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(tConn.GetState())
+	t.Log(tp.Getstat())
+	cases := []struct {
+		name string
+		p    *warlock.Pool
+		conn *grpc.ClientConn
+	}{
+		{name: "t01", p: tp, conn: tConn},
+	}
+	for _, test := range cases {
+		t.Run(test.name, func(t *testing.T) {
+			t.Log(test.conn.GetState())
+			if test.conn.GetState() != 2 {
+				t.Errorf("(p *Pool)Close() stat %v , wantstat = %s", test.conn.GetState(), "ready")
+			}
+		})
+	}
+
+}
