@@ -36,7 +36,7 @@ func NewPoolFactory(c *config.Config) *PoolFactory {
 func (f *PoolFactory) Passivate(conn *grpc.ClientConn) (bool, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	if conn.WaitForStateChange(ctx, 3) && conn.WaitForStateChange(ctx, 4) {
+	if conn.WaitForStateChange(ctx, 3) && conn.WaitForStateChange(ctx, 4) && conn.WaitForStateChange(ctx, 0) {
 		return true, nil
 	} else {
 		return false, f.Destroy(conn)
@@ -47,9 +47,9 @@ func (f *PoolFactory) Passivate(conn *grpc.ClientConn) (bool, error) {
 func (f *PoolFactory) Activate(conn *grpc.ClientConn) Condition {
 	stat := conn.GetState()
 	switch {
-	case stat%2 == 0:
+	case stat == 2:
 		return Ready
-	case stat%2 > 0:
+	case stat == 0 || stat == 1 || stat == 3:
 		return Put
 	default:
 		return Destroy
