@@ -32,10 +32,6 @@ import (
 	pb "google.golang.org/grpc/examples/helloworld/helloworld"
 )
 
-const (
-	address = "localhost:50051"
-)
-
 func main() {
 
 	cfg := warlock.NewConfig()
