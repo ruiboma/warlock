@@ -72,4 +72,4 @@ func main() {
 ```
 
 # License
-*BSD 2 clause - see [LICENSE](https://github.com/ruiboma/warlock/blob/master/LICENSE) for more details.*
+*see [LICENSE](https://github.com/ruiboma/warlock/blob/master/LICENSE) for more details.*
