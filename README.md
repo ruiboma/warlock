@@ -5,10 +5,10 @@
 <!-- [![GoDoc](https://godoc.org/github.com/ruiboma/warlock/clientfactory?status.svg)](https://godoc.org/github.com/ruiboma/warlock/clientfactory) -->
 [![Open Source Helpers](https://www.codetriage.com/ruiboma/warlock/badges/users.svg)](https://www.codetriage.com/ruiboma/warlock)
 
-**This is the golang grpc client connection pool tool**
+**This is the golang grpc client connection pool tool**\
+**Complete link state detection mechanism Every link obtained is efficient.**
 
 # Project Maturity
-Complete link state detection mechanism Every link obtained is efficient.
 This project function is relatively simple, the basic api will not have more changes.
 They will be discussed on [Github issues](https://github.com/ruiboma/warlock/issues) along with any bugs or enhancements
 
@@ -64,7 +64,8 @@ func main() {
 
     /*
 	used, free := pool.Getstat() // Can view usage and free quantities
-	cfg.OverflowCap = true  This configuration may cause the existing link to exceed the total number set.If it overflows for a long time you need to consider increasing the value of cap.
+	cfg.OverflowCap = true  This configuration may cause the existing link to exceed the total number set.
+	If it overflows for a long time you need to consider increasing the value of cap.
 	defer pool.ClearPool()  // Close all existing links with the pool before exiting the program
 	defer close()  // It is recommended to use this, or use  <pool.Close(conn)> func
     */
