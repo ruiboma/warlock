@@ -9,6 +9,23 @@ import (
 	"google.golang.org/grpc"
 )
 
+var (
+	CFG   *config.Config
+	TPool *warlock.Pool
+)
+
+func init() {
+	CFG = warlock.NewConfig()
+	CFG.ServerAdds = &[]string{"127.0.0.1:50051"}
+	CFG.MaxCap = 100
+	CFG.OverflowCap = false // true
+	tp, err := warlock.NewWarlock(CFG, grpc.WithInsecure())
+	TPool = tp
+	if err != nil {
+		panic(err)
+	}
+}
+
 func TestNewWarlock(t *testing.T) {
 	cases := []struct {
 		name      string
@@ -90,4 +107,26 @@ func TestClose(t *testing.T) {
 		})
 	}
 
+}
+
+func BenchmarkPara(b *testing.B) {
+	cases := []struct {
+		name string
+	}{
+		{"01"},
+	}
+	for _, test := range cases {
+		b.Log(test)
+		b.RunParallel(func(b *testing.PB) {
+			for b.Next() {
+				_, close, err := TPool.Acquire()
+				if err != nil {
+					panic(err)
+				}
+				close()
+			}
+		})
+
+	}
+	b.Log(TPool.Getstat())
 }

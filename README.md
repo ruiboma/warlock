@@ -2,8 +2,9 @@
 [![Build Status](https://travis-ci.com/ruiboma/warlock.svg?branch=master)](https://travis-ci.com/ruiboma/warlock)
 [![LICENSE](https://img.shields.io/badge/licence-Apache%202.0-brightgreen.svg?style=flat-square)](https://github.com/ruiboma/warlock/blob/master/LICENSE)
 [![GoDoc](https://godoc.org/github.com/ruiboma/warlock?status.svg)](https://godoc.org/github.com/ruiboma/warlock)
-<!-- [![GoDoc](https://godoc.org/github.com/ruiboma/warlock/clientfactory?status.svg)](https://godoc.org/github.com/ruiboma/warlock/clientfactory) -->
 [![Open Source Helpers](https://www.codetriage.com/ruiboma/warlock/badges/users.svg)](https://www.codetriage.com/ruiboma/warlock)
+<!-- [![GoDoc](https://godoc.org/github.com/ruiboma/warlock/clientfactory?status.svg)](https://godoc.org/github.com/ruiboma/warlock/clientfactory) -->
+
 
 **This is the golang grpc client connection pool tool**\
 **Complete link state detection mechanism Every link obtained is efficient.**
