@@ -11,7 +11,7 @@
 **Complete link state detection mechanism Every link obtained is efficient.**
 
 # Project Maturity
-This project function is relatively simple, the basic api will not have more changes.
+Basic api will not have more changes.
 They will be discussed on [Github issues](https://github.com/ruiboma/warlock/issues) along with any bugs or enhancements
 
 # Goals
