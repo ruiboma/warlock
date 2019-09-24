@@ -1,4 +1,4 @@
-// grpc client Connection pool
+// Package warlock grpc client Connection pool
 package warlock
 
 import (
@@ -15,18 +15,20 @@ import (
 )
 
 var (
-	AcquireError = errors.New("Exceeding the big wait time, you can fix this error by setting the overflow cap or increasing the maximum capacity of the cap.")
-	TimeoutError = errors.New("warlock: Connection timed out, check the address configuration or network status.")
+	errAcquire = errors.New("Exceeding the big wait time, you can fix this error by setting the overflow cap or increasing the maximum capacity of the cap.")
+	errTimeout = errors.New("warlock: Connection timed out, check the address configuration or network status.")
 )
 
+// should defer CloseFunc
 type CloseFunc func()
-type ChanStat int
+type chanStat int
 
 const (
-	isClose ChanStat = iota
+	isClose chanStat = iota
 	isOpen
 )
 
+// connection pool
 type Pool struct {
 	config      *config.Config
 	mlock       sync.Mutex
@@ -34,9 +36,10 @@ type Pool struct {
 	factory     *clientfactory.PoolFactory
 	usageAmount int
 	ops         []grpc.DialOption
-	ChannelStat ChanStat
+	ChannelStat chanStat
 }
 
+// NewConfig Get a config object and then customize his properties
 func NewConfig() *config.Config {
 	c := &config.Config{}
 	c.MaxCap = 10
@@ -46,6 +49,7 @@ func NewConfig() *config.Config {
 	return c
 }
 
+// NewWarlock  Get a warlovk (connection pool)
 func NewWarlock(c *config.Config, ops ...grpc.DialOption) (*Pool, error) {
 	conns := make(chan *grpc.ClientConn, c.MaxCap)
 	factory := clientfactory.NewPoolFactory(c)
@@ -53,9 +57,8 @@ func NewWarlock(c *config.Config, ops ...grpc.DialOption) (*Pool, error) {
 	err := factory.InitConn(conns, ops...)
 	if err != nil {
 		return nil, err
-	} else {
-		return pool, nil
 	}
+	return pool, nil
 
 }
 
@@ -65,7 +68,7 @@ func (w *Pool) usagelock(add int) {
 	w.usageAmount += add
 }
 
-//  Fishing a usable link from the pool
+// Acquire  Fishing a usable link from the pool
 func (w *Pool) Acquire() (*grpc.ClientConn, CloseFunc, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), w.config.AcquireTimeout*time.Second)
 	defer cancel()
@@ -86,7 +89,7 @@ func (w *Pool) Acquire() (*grpc.ClientConn, CloseFunc, error) {
 				continue
 			}
 		case <-ctx.Done():
-			return nil, nil, AcquireError
+			return nil, nil, errAcquire
 		default:
 			if w.config.OverflowCap == false && w.usageAmount >= w.config.MaxCap {
 				continue
@@ -95,7 +98,7 @@ func (w *Pool) Acquire() (*grpc.ClientConn, CloseFunc, error) {
 				clientconn, err := w.factory.MakeConn(w.config.GetTarget(), Wops...)
 				if err != nil {
 					if err == context.DeadlineExceeded {
-						return nil, nil, TimeoutError
+						return nil, nil, errTimeout
 					}
 					return nil, nil, err
 				}
@@ -107,7 +110,7 @@ func (w *Pool) Acquire() (*grpc.ClientConn, CloseFunc, error) {
 
 }
 
-// Recycling available links
+// Close Recycling available links
 func (w *Pool) Close(client *grpc.ClientConn) {
 	go func() {
 		detect, _ := w.factory.Passivate(client)
@@ -126,12 +129,12 @@ func (w *Pool) Close(client *grpc.ClientConn) {
 
 }
 
-// Return to the use of resources in the pool
+// Getstat Return to the use of resources in the pool
 func (w *Pool) Getstat() (used, surplus int) {
 	return w.usageAmount, len(w.conns)
 }
 
-// If you want to end the program, don't forget it
+// ClearPool Disconnect the link at the end of the program
 func (w *Pool) ClearPool() {
 	w.mlock.Lock()
 	defer w.mlock.Unlock()
