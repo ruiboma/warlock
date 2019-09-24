@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/ruiboma/warlock/config"
@@ -34,7 +35,7 @@ type Pool struct {
 	mlock       sync.Mutex
 	conns       chan *grpc.ClientConn
 	factory     *clientfactory.PoolFactory
-	usageAmount int
+	usageAmount *int64
 	ops         []grpc.DialOption
 	ChannelStat chanStat
 }
@@ -62,10 +63,8 @@ func NewWarlock(c *config.Config, ops ...grpc.DialOption) (*Pool, error) {
 
 }
 
-func (w *Pool) usagelock(add int) {
-	w.mlock.Lock()
-	defer w.mlock.Unlock()
-	w.usageAmount += add
+func (w *Pool) usagelock(add int64) {
+	atomic.AddInt64(w.usageAmount, add)
 }
 
 // Acquire  Fishing a usable link from the pool
@@ -91,7 +90,7 @@ func (w *Pool) Acquire() (*grpc.ClientConn, CloseFunc, error) {
 		case <-ctx.Done():
 			return nil, nil, errAcquire
 		default:
-			if w.config.OverflowCap == false && w.usageAmount >= w.config.MaxCap {
+			if w.config.OverflowCap == false && *w.usageAmount >= w.config.MaxCap {
 				continue
 			} else {
 				Wops := append(w.ops, grpc.WithBlock())
@@ -130,8 +129,8 @@ func (w *Pool) Close(client *grpc.ClientConn) {
 }
 
 // Getstat Return to the use of resources in the pool
-func (w *Pool) Getstat() (used, surplus int) {
-	return w.usageAmount, len(w.conns)
+func (w *Pool) Getstat() (used int64, surplus int) {
+	return atomic.LoadInt64(w.usageAmount), len(w.conns)
 }
 
 // ClearPool Disconnect the link at the end of the program
