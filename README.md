@@ -3,6 +3,7 @@
 [![LICENSE](https://img.shields.io/badge/licence-Apache%202.0-brightgreen.svg?style=flat-square)](https://github.com/ruiboma/warlock/blob/master/LICENSE)
 [![GoDoc](https://godoc.org/github.com/ruiboma/warlock?status.svg)](https://godoc.org/github.com/ruiboma/warlock)
 [![Open Source Helpers](https://www.codetriage.com/ruiboma/warlock/badges/users.svg)](https://www.codetriage.com/ruiboma/warlock)
+[![Go Report Card](https://goreportcard.com/badge/github.com/ruiboma/warlock)](https://goreportcard.com/report/github.com/ruiboma/warlock)
 <!-- [![GoDoc](https://godoc.org/github.com/ruiboma/warlock/clientfactory?status.svg)](https://godoc.org/github.com/ruiboma/warlock/clientfactory) -->
 
 
@@ -14,7 +15,7 @@ This project function is relatively simple, the basic api will not have more cha
 They will be discussed on [Github issues](https://github.com/ruiboma/warlock/issues) along with any bugs or enhancements
 
 # Goals
-Provide a few interfaces, as efficient, stable and flexible as possible. May join the load balancing related module in the future and increase the availability of the connection
+Provide a few interfaces, as efficient, stable and flexible as possible.
 
 # Doc
 [warlock](https://godoc.org/github.com/ruiboma/warlock)\

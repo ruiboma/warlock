@@ -11,28 +11,29 @@ import (
 )
 
 var (
-	targetError = errors.New("Address is empty or invalid")
+	errorTarget = errors.New("Address is empty or invalid")
 )
 
 type PoolFactory struct {
 	config *config.Config
 }
-type Condition int
+type condition int
 
 const (
-	// Can be used
-	Ready Condition = iota
-	// Not available. Maybe later.
+	// Ready Can be used
+	Ready condition = iota
+	// Put Not available. Maybe later.
 	Put
-	// Failure occurs and cannot be restored
+	// Destroy Failure occurs and cannot be restored
 	Destroy
 )
 
+// get poolFactory
 func NewPoolFactory(c *config.Config) *PoolFactory {
 	return &PoolFactory{config: c}
 }
 
-// Action before releasing the resource
+// Passivate Action before releasing the resource
 func (f *PoolFactory) Passivate(conn *grpc.ClientConn) (bool, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -43,8 +44,8 @@ func (f *PoolFactory) Passivate(conn *grpc.ClientConn) (bool, error) {
 	}
 }
 
-// Action taken after getting the resource
-func (f *PoolFactory) Activate(conn *grpc.ClientConn) Condition {
+// Activate Action taken after getting the resource
+func (f *PoolFactory) Activate(conn *grpc.ClientConn) condition {
 	stat := conn.GetState()
 	switch {
 	case stat == 2:
@@ -62,10 +63,10 @@ func (f *PoolFactory) Destroy(conn *grpc.ClientConn) error {
 	return conn.Close()
 }
 
-// Users are not recommended to use this API
+// MakeConn Users are not recommended to use this API
 func (f *PoolFactory) MakeConn(target string, ops ...grpc.DialOption) (*grpc.ClientConn, error) {
 	if target == "" || strings.Index(target, ":") == -1 {
-		return nil, targetError
+		return nil, errorTarget
 	}
 	if f.config.DynamicLink == true {
 		return grpc.Dial(target, ops...)
@@ -77,6 +78,7 @@ func (f *PoolFactory) MakeConn(target string, ops ...grpc.DialOption) (*grpc.Cli
 
 }
 
+// InitConn Initialize the create link
 func (f *PoolFactory) InitConn(conns chan *grpc.ClientConn, ops ...grpc.DialOption) error {
 	l := cap(conns) - len(conns)
 	for i := 1; i <= l; i++ {
