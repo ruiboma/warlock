@@ -3,6 +3,7 @@
 [![LICENSE](https://img.shields.io/badge/licence-Apache%202.0-brightgreen.svg?style=flat-square)](https://github.com/ruiboma/warlock/blob/master/LICENSE)
 [![GoDoc](https://godoc.org/github.com/ruiboma/warlock?status.svg)](https://godoc.org/github.com/ruiboma/warlock)
 [![Open Source Helpers](https://www.codetriage.com/ruiboma/warlock/badges/users.svg)](https://www.codetriage.com/ruiboma/warlock)
+[![Go Report Card](https://goreportcard.com/badge/github.com/ruiboma/warlock)](https://goreportcard.com/report/github.com/ruiboma/warlock)
 <!-- [![GoDoc](https://godoc.org/github.com/ruiboma/warlock/clientfactory?status.svg)](https://godoc.org/github.com/ruiboma/warlock/clientfactory) -->
 
 
