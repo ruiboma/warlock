@@ -1,4 +1,4 @@
-// Package warlock grpc client Connection pool
+// Package grpcpool  grpc client Connection pool  warlock
 package warlock
 
 import (
