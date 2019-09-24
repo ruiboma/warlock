@@ -15,7 +15,7 @@ import (
 )
 
 var (
-	errAcquire = errors.New("Exceeding the big wait time, you can fix this error by setting the overflow cap or increasing the maximum capacity of the cap.")
+	errAcquire = errors.New("Acquire connection timed out, you can fix this error by setting the overflow cap or increasing the maximum capacity of the cap.")
 	errTimeout = errors.New("warlock: Connection timed out, check the address configuration or network status.")
 )
 
