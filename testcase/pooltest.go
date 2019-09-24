@@ -10,7 +10,9 @@ import (
 )
 
 var (
-	CFG   *config.Config
+	// CFG init config
+	CFG *config.Config
+	// TPool init Pool
 	TPool *warlock.Pool
 )
 
@@ -26,6 +28,7 @@ func init() {
 	}
 }
 
+// TestNewWarlock test get pool
 func TestNewWarlock(t *testing.T) {
 	cases := []struct {
 		name      string
@@ -50,6 +53,7 @@ func TestNewWarlock(t *testing.T) {
 
 }
 
+// TestAcquire test acq func
 func TestAcquire(t *testing.T) {
 	cases := []struct {
 		name      string
@@ -77,6 +81,7 @@ func TestAcquire(t *testing.T) {
 
 }
 
+// TestClose test recycling
 func TestClose(t *testing.T) {
 	cfg := warlock.NewConfig()
 	cfg.ServerAdds = &[]string{"127.0.0.1:50051"}
@@ -109,6 +114,7 @@ func TestClose(t *testing.T) {
 
 }
 
+// BenchmarkPara  Benchmark test
 func BenchmarkPara(b *testing.B) {
 	cases := []struct {
 		name string

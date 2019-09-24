@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-// Configuring the properties of the pool
+// Config Configuring the properties of the pool
 type Config struct {
 	lock           sync.RWMutex
 	ServerAdds     *[]string
@@ -20,7 +20,7 @@ func init() {
 	rand.Seed(time.Now().Unix())
 }
 
-// If there are multiple services  will be randomly selected
+// GetTarget If there are multiple services  will be randomly selected
 func (c *Config) GetTarget() string {
 	c.lock.RLock()
 	defer c.lock.RUnlock()
