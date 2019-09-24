@@ -19,7 +19,7 @@ var (
 	errTimeout = errors.New("warlock: Connection timed out, check the address configuration or network status.")
 )
 
-// should defer CloseFunc
+//CloseFunc should defer
 type CloseFunc func()
 type chanStat int
 
@@ -28,7 +28,7 @@ const (
 	isOpen
 )
 
-// connection pool
+// Pool connection pool
 type Pool struct {
 	config      *config.Config
 	mlock       sync.Mutex

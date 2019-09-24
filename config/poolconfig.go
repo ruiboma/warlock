@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-// Configuring the properties of the pool
+// Config Configuring the properties of the pool
 type Config struct {
 	lock           sync.RWMutex
 	ServerAdds     *[]string

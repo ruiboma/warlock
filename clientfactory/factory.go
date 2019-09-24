@@ -14,6 +14,7 @@ var (
 	errorTarget = errors.New("Address is empty or invalid")
 )
 
+// PoolFactory obj
 type PoolFactory struct {
 	config *config.Config
 }
@@ -28,7 +29,7 @@ const (
 	Destroy
 )
 
-// get poolFactory
+// NewPoolFactory get poolFactory
 func NewPoolFactory(c *config.Config) *PoolFactory {
 	return &PoolFactory{config: c}
 }
@@ -39,9 +40,9 @@ func (f *PoolFactory) Passivate(conn *grpc.ClientConn) (bool, error) {
 	defer cancel()
 	if conn.WaitForStateChange(ctx, 3) && conn.WaitForStateChange(ctx, 4) && conn.WaitForStateChange(ctx, 0) {
 		return true, nil
-	} else {
-		return false, f.Destroy(conn)
 	}
+	return false, f.Destroy(conn)
+
 }
 
 // Activate Action taken after getting the resource
@@ -70,11 +71,10 @@ func (f *PoolFactory) MakeConn(target string, ops ...grpc.DialOption) (*grpc.Cli
 	}
 	if f.config.DynamicLink == true {
 		return grpc.Dial(target, ops...)
-	} else {
-		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		defer cancel()
-		return grpc.DialContext(ctx, target, ops...)
 	}
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	return grpc.DialContext(ctx, target, ops...)
 
 }
 
