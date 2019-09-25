@@ -4,7 +4,6 @@
 [![GoDoc](https://godoc.org/github.com/ruiboma/warlock?status.svg)](https://godoc.org/github.com/ruiboma/warlock)
 [![Open Source Helpers](https://www.codetriage.com/ruiboma/warlock/badges/users.svg)](https://www.codetriage.com/ruiboma/warlock)
 [![Go Report Card](https://goreportcard.com/badge/github.com/ruiboma/warlock)](https://goreportcard.com/report/github.com/ruiboma/warlock)
-<!-- [![GoDoc](https://godoc.org/github.com/ruiboma/warlock/clientfactory?status.svg)](https://godoc.org/github.com/ruiboma/warlock/clientfactory) -->
 
 
 **This is the golang grpc client connection pool tool**\
