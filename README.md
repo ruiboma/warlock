@@ -64,7 +64,7 @@ func main() {
 	cfg.OverflowCap = true  This configuration may cause the existing link to exceed the total number set.
 	If it overflows for a long time you need to consider increasing the value of cap.
 	defer pool.ClearPool()  // Close all existing links with the pool before exiting the program
-	defer close()  // It is recommended to use this, or use  <pool.Close(conn)> func
+	defer close()  // It is recommended to use this, or <pool.Close(conn)> func
     */
 ```
 
