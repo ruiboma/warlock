@@ -35,7 +35,7 @@ type Pool struct {
 	mlock       sync.Mutex
 	conns       chan *grpc.ClientConn
 	factory     *clientfactory.PoolFactory
-	usageAmount *int64
+	usageAmount int64
 	ops         []grpc.DialOption
 	ChannelStat chanStat
 }
@@ -54,7 +54,7 @@ func NewConfig() *config.Config {
 func NewWarlock(c *config.Config, ops ...grpc.DialOption) (*Pool, error) {
 	conns := make(chan *grpc.ClientConn, c.MaxCap)
 	factory := clientfactory.NewPoolFactory(c)
-	pool := &Pool{config: c, conns: conns, factory: factory, ops: ops, ChannelStat: 1}
+	pool := &Pool{config: c, conns: conns, factory: factory, ops: ops, ChannelStat: 1, usageAmount: 0}
 	err := factory.InitConn(conns, ops...)
 	if err != nil {
 		return nil, err
@@ -64,7 +64,7 @@ func NewWarlock(c *config.Config, ops ...grpc.DialOption) (*Pool, error) {
 }
 
 func (w *Pool) usagelock(add int64) {
-	atomic.AddInt64(w.usageAmount, add)
+	atomic.AddInt64(&w.usageAmount, add)
 }
 
 // Acquire  Fishing a usable link from the pool
@@ -90,7 +90,7 @@ func (w *Pool) Acquire() (*grpc.ClientConn, CloseFunc, error) {
 		case <-ctx.Done():
 			return nil, nil, errAcquire
 		default:
-			if w.config.OverflowCap == false && *w.usageAmount >= w.config.MaxCap {
+			if w.config.OverflowCap == false && w.usageAmount >= w.config.MaxCap {
 				continue
 			} else {
 				Wops := append(w.ops, grpc.WithBlock())
@@ -130,7 +130,7 @@ func (w *Pool) Close(client *grpc.ClientConn) {
 
 // Getstat Return to the use of resources in the pool
 func (w *Pool) Getstat() (used int64, surplus int) {
-	return atomic.LoadInt64(w.usageAmount), len(w.conns)
+	return atomic.LoadInt64(&w.usageAmount), len(w.conns)
 }
 
 // ClearPool Disconnect the link at the end of the program
