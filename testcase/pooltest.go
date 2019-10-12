@@ -122,7 +122,7 @@ func BenchmarkPara(b *testing.B) {
 		{"01"},
 	}
 	for _, test := range cases {
-		b.Log(test)
+		b.Logf("test case: %v", test)
 		b.RunParallel(func(b *testing.PB) {
 			for b.Next() {
 				_, close, err := TPool.Acquire()
