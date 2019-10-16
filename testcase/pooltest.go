@@ -6,6 +6,7 @@ import (
 
 	"github.com/ruiboma/warlock"
 	"github.com/ruiboma/warlock/config"
+	. "github.com/smartystreets/goconvey/convey"
 	"google.golang.org/grpc"
 )
 
@@ -40,15 +41,20 @@ func TestNewWarlock(t *testing.T) {
 		// your test cases
 	}
 	for _, test := range cases {
-		t.Run(test.name, func(t *testing.T) {
+		Convey("test get pool", t, func() {
 			res, err := warlock.NewWarlock(test.c, test.d...)
-			if (err != nil) != test.wantError {
-				t.Errorf("NewWarlock() error = %v, resError %v", err, test.wantError)
-			}
-			if !reflect.DeepEqual(test.wantRes, res) {
-				t.Errorf("NewWarlock() res = %v wantres %v", res, test.wantRes)
-			}
+			So(err, ShouldBeNil)
+			So(res, ShouldHaveSameTypeAs, test.wantRes)
 		})
+		// t.Run(test.name, func(t *testing.T) {
+		// 	res, err := warlock.NewWarlock(test.c, test.d...)
+		// 	if (err != nil) != test.wantError {
+		// 		t.Errorf("NewWarlock() error = %v, resError %v", err, test.wantError)
+		// 	}
+		// 	if !reflect.DeepEqual(test.wantRes, res) {
+		// 		t.Errorf("NewWarlock() res = %v wantres %v", res, test.wantRes)
+		// 	}
+		// })
 	}
 
 }
