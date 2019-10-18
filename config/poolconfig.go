@@ -29,5 +29,4 @@ func (c *Config) GetTarget() string {
 		return ""
 	}
 	return (*c.ServerAdds)[rand.Int()%cLen]
-
 }
