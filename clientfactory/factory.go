@@ -14,7 +14,7 @@ var (
 	errorTarget = errors.New("Address is empty or invalid")
 )
 
-// PoolFactory obj
+// PoolFactory object
 type PoolFactory struct {
 	config *config.Config
 }
