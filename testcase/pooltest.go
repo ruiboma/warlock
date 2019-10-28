@@ -46,7 +46,7 @@ func TestNewWarlock(t *testing.T) {
 			So(err, ShouldBeNil)
 			So(res, ShouldHaveSameTypeAs, test.wantRes)
 		})
-		// t.Run(test.name, func(t *testing.T) {
+		// t.Run(test.name,  func(t *testing.T) {
 		// 	res, err := warlock.NewWarlock(test.c, test.d...)
 		// 	if (err != nil) != test.wantError {
 		// 		t.Errorf("NewWarlock() error = %v, resError %v", err, test.wantError)
