@@ -16,7 +16,7 @@ import (
 )
 
 var (
-	errAcquire = errors.New("Acquire connection timed out, you can fix this error by setting the overflow cap or increasing the maximum capacity of the cap.")
+	errAcquire = errors.New("acquire connection timed out, you can fix this error by setting the overflow cap or increasing the maximum capacity of the cap")
 	errTimeout = errors.New("warlock: Connection timed out, check the address configuration or network status")
 )
 
@@ -31,7 +31,7 @@ const (
 
 // Pool connection pool
 type Pool struct {
-	config      *config.Config
+	Config      *config.Config
 	mlock       sync.Mutex
 	conns       chan *grpc.ClientConn
 	factory     *clientfactory.PoolFactory
@@ -54,7 +54,7 @@ func NewConfig() *config.Config {
 func NewWarlock(c *config.Config, ops ...grpc.DialOption) (*Pool, error) {
 	conns := make(chan *grpc.ClientConn, c.MaxCap)
 	factory := clientfactory.NewPoolFactory(c)
-	pool := &Pool{config: c, conns: conns, factory: factory, ops: ops, ChannelStat: 1, usageAmount: 0}
+	pool := &Pool{Config: c, conns: conns, factory: factory, ops: ops, ChannelStat: 1, usageAmount: 0}
 	err := factory.InitConn(conns, ops...)
 	if err != nil {
 		return nil, err
@@ -69,7 +69,7 @@ func (w *Pool) usagelock(add int64) {
 
 // Acquire  Fishing a usable link from the pool
 func (w *Pool) Acquire() (*grpc.ClientConn, CloseFunc, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), w.config.AcquireTimeout*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), w.Config.AcquireTimeout*time.Second)
 	defer cancel()
 	for {
 		select {
@@ -90,11 +90,11 @@ func (w *Pool) Acquire() (*grpc.ClientConn, CloseFunc, error) {
 		case <-ctx.Done():
 			return nil, nil, errAcquire
 		default:
-			if w.config.OverflowCap == false && w.usageAmount >= w.config.MaxCap {
+			if w.Config.OverflowCap == false && w.usageAmount >= w.Config.MaxCap {
 				continue
 			} else {
 				Wops := append(w.ops, grpc.WithBlock())
-				clientconn, err := w.factory.MakeConn(w.config.GetTarget(), Wops...)
+				clientconn, err := w.factory.MakeConn(w.Config.GetTarget(), Wops...)
 				if err != nil {
 					if err == context.DeadlineExceeded {
 						return nil, nil, errTimeout
@@ -128,8 +128,8 @@ func (w *Pool) Close(client *grpc.ClientConn) {
 
 }
 
-// Getstat Return to the use of resources in the pool
-func (w *Pool) Getstat() (used int64, surplus int) {
+// GetStat Return to the use of resources in the pool
+func (w *Pool) GetStat() (used int64, surplus int) {
 	return atomic.LoadInt64(&w.usageAmount), len(w.conns)
 }
 
