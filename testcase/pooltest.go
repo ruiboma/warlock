@@ -72,12 +72,12 @@ func TestAcquire(t *testing.T) {
 	}
 	for _, test := range cases {
 		t.Run(test.name, func(t *testing.T) {
-			conn, close, err := test.p.Acquire()
+			conn, closeFunc, err := test.p.Acquire()
 			if !reflect.DeepEqual(conn, test.wantconn) {
 				t.Errorf("(w *Pool)Acquire() res=%v want %v", conn, test.wantconn)
 			}
-			if !reflect.DeepEqual(close, test.wantclose) {
-				t.Errorf("(w *Pool)Acquire() close=%v want %v", close, test.wantclose)
+			if !reflect.DeepEqual(closeFunc, test.wantclose) {
+				t.Errorf("(w *Pool)Acquire() close=%v want %v", closeFunc, test.wantclose)
 			}
 			if (err != nil) != test.wanterror {
 				t.Errorf("(w *Pool)Acquire() errors=%v want %v", (err != nil), test.wanterror)
@@ -95,13 +95,13 @@ func TestClose(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	tConn, close, err := tp.Acquire()
-	defer close()
+	tConn, closeFunc, err := tp.Acquire()
 	if err != nil {
 		t.Fatal(err)
 	}
+	defer closeFunc()
 	t.Log(tConn.GetState())
-	t.Log(tp.Getstat())
+	t.Log(tp.GetStat())
 	cases := []struct {
 		name string
 		p    *warlock.Pool
@@ -120,7 +120,7 @@ func TestClose(t *testing.T) {
 
 }
 
-// BenchmarkPara  Benchmark test
+// benchmarkPara  Benchmark test
 func BenchmarkPara(b *testing.B) {
 	cases := []struct {
 		name string
@@ -131,14 +131,14 @@ func BenchmarkPara(b *testing.B) {
 		b.Logf("test case: %v", test)
 		b.RunParallel(func(b *testing.PB) {
 			for b.Next() {
-				_, close, err := TPool.Acquire()
+				_, closeFunc, err := TPool.Acquire()
 				if err != nil {
 					panic(err)
 				}
-				close()
+				closeFunc()
 			}
 		})
 
 	}
-	b.Log(TPool.Getstat())
+	b.Log(TPool.GetStat())
 }
