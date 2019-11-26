@@ -36,30 +36,18 @@ import (
 func main() {
 
 	cfg := warlock.NewConfig()
-	cfg.MaxCap = 100
-	cfg.OverflowCap = true      
 	cfg.ServerAdds = &[]string{"127.0.0.1:50051"}
 
 
 	pool, err := warlock.NewWarlock(cfg, grpc.WithInsecure())
-	defer pool.ClearPool()
 
 
 	conn, close, err := pool.Acquire()
 	defer close()
 
-
 	
-
-
-	// start use
-	c := pb.NewYourClient(conn)S
-	r, err := c.YourRPCFunc(ctx,balabala..)
-    ...
-
-
-
     /*
+        Connection pool is not necessary for grpc
 	used, free := pool.Getstat() // Can view usage and free quantities
 	cfg.OverflowCap = true  This configuration may cause the existing link to exceed the total number set.
 	If it overflows for a long time you need to consider increasing the value of cap.
