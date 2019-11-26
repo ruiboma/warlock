@@ -80,7 +80,7 @@ func TestAcquire(t *testing.T) {
 				t.Errorf("(w *Pool)Acquire() close=%v want %v", closeFunc, test.wantclose)
 			}
 			if (err != nil) != test.wanterror {
-				t.Errorf("(w *Pool)Acquire() errors=%v want %v", (err != nil), test.wanterror)
+				t.Errorf("(w *Pool)Acquire() errors=%v want %v", err != nil, test.wanterror)
 			}
 		})
 	}
