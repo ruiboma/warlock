@@ -18,7 +18,7 @@ var (
 type PoolFactory struct {
 	config *config.Config
 }
-type condition int
+type condition = int
 
 const (
 	// Ready Can be used
@@ -46,7 +46,7 @@ func (f *PoolFactory) Passivate(conn *grpc.ClientConn) (bool, error) {
 }
 
 // Activate Action taken after getting the resource
-func (f *PoolFactory) Activate(conn *grpc.ClientConn) condition {
+func (f *PoolFactory) Activate(conn *grpc.ClientConn) int {
 	stat := conn.GetState()
 	switch {
 	case stat == 2:
