@@ -29,6 +29,8 @@ const (
 	isOpen
 )
 
+type WarOption func(*config.Config)
+
 // Pool connection pool
 type Pool struct {
 	Config      *config.Config
@@ -40,13 +42,42 @@ type Pool struct {
 	ChannelStat chanStat
 }
 
+func WithMaxCap(num int64) WarOption {
+	return func(i *config.Config) {
+		i.MaxCap = num
+	}
+}
+
+func WithServerAdd(s *[]string) WarOption {
+	return func(i *config.Config) {
+		i.ServerAdds = s
+	}
+}
+
+func WithAcquireTimeOut(num time.Duration) WarOption {
+	return func(i *config.Config) {
+		i.AcquireTimeout = num
+	}
+}
+
+func OptionNoOverFlow(i *config.Config) {
+	i.OverflowCap = false
+}
+
+func OptionDynamicLink(i *config.Config) {
+	i.DynamicLink = true
+}
+
 // NewConfig Get a config object and then customize his properties
-func NewConfig() *config.Config {
+func NewConfig(ops ...WarOption) *config.Config {
 	c := &config.Config{}
 	c.MaxCap = 10
 	c.DynamicLink = false
 	c.OverflowCap = true
 	c.AcquireTimeout = 3 * time.Second
+	for _, f := range ops {
+		f(c)
+	}
 	return c
 }
 
