@@ -37,11 +37,14 @@ func main() {
 
 	cfg := warlock.NewConfig()
 	cfg.ServerAdds = &[]string{"127.0.0.1:50051"}
+    
+        //  or
+        cfg := warlock.NewConfig(warlock.OptionNoOverFlow, warlock.WithServerAdd(&[]string{"127.0.0.1:50051"}))
+	
 
 
-	pool, err := warlock.NewWarlock(cfg, grpc.WithInsecure())
 
-
+        pool, err := warlock.NewWarlock(cfg, grpc.WithInsecure())
 	conn, close, err := pool.Acquire()
 	defer close()
 
