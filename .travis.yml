@@ -1,6 +1,16 @@
 language: go
 
+jobs:
+  include:
+    - go: "1.12.7"
+      env: GO111MODULE=on
+    - go: "1.12.7"
+      env: GO111MODULE=on
+    - go: "1.12.7"
+      env: GO111MODULE=on
+script: go build
 
-go:
-  - "1.12.7"
-
+branches:
+  only:
+    - master
+    - dev
