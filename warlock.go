@@ -8,9 +8,9 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/ruiboma/warlock/config"
+	"warlock/config"
 
-	"github.com/ruiboma/warlock/clientfactory"
+	"warlock/clientfactory"
 
 	"google.golang.org/grpc"
 )
@@ -34,7 +34,7 @@ type WarOption func(*config.Config)
 // Pool connection pool
 type Pool struct {
 	Config      *config.Config
-	mlock       sync.Mutex
+	mLock       *sync.Mutex
 	conns       chan *grpc.ClientConn
 	factory     *clientfactory.PoolFactory
 	usageAmount int64
@@ -60,6 +60,13 @@ func WithAcquireTimeOut(num time.Duration) WarOption {
 	}
 }
 
+// Custom get address
+func WithGetTargetFunc(g config.GetTargetFunc) WarOption {
+	return func(c *config.Config) {
+		c.GetTargetFunc = g
+	}
+}
+
 func OptionNoOverFlow(i *config.Config) {
 	i.OverflowCap = false
 }
@@ -70,7 +77,7 @@ func OptionDynamicLink(i *config.Config) {
 
 // NewConfig Get a config object and then customize his properties
 func NewConfig(ops ...WarOption) *config.Config {
-	c := &config.Config{}
+	c := &config.Config{Lock: &sync.RWMutex{}}
 	c.MaxCap = 10
 	c.DynamicLink = false
 	c.OverflowCap = true
@@ -85,13 +92,12 @@ func NewConfig(ops ...WarOption) *config.Config {
 func NewWarlock(c *config.Config, ops ...grpc.DialOption) (*Pool, error) {
 	conns := make(chan *grpc.ClientConn, c.MaxCap)
 	factory := clientfactory.NewPoolFactory(c)
-	pool := &Pool{Config: c, conns: conns, factory: factory, ops: ops, ChannelStat: 1, usageAmount: 0}
+	pool := &Pool{Config: c, conns: conns, factory: factory, ops: ops, ChannelStat: 1, usageAmount: 0, mLock: &sync.Mutex{}}
 	err := factory.InitConn(conns, ops...)
 	if err != nil {
 		return nil, err
 	}
 	return pool, nil
-
 }
 
 func (w *Pool) usagelock(add int64) {
@@ -104,18 +110,18 @@ func (w *Pool) Acquire() (*grpc.ClientConn, CloseFunc, error) {
 	defer cancel()
 	for {
 		select {
-		case clientconn := <-w.conns:
-			con := w.factory.Activate(clientconn)
+		case clientConn := <-w.conns:
+			con := w.factory.Activate(clientConn)
 			switch con {
 			case 0:
 				w.usagelock(1)
-				return clientconn, func() { w.Close(clientconn) }, nil
+				return clientConn, func() { w.Close(clientConn) }, nil
 			case 1:
-				w.Close(clientconn)
+				w.Close(clientConn)
 				continue
 			default:
 				w.usagelock(-1)
-				w.factory.Destroy(clientconn)
+				w.factory.Destroy(clientConn)
 				continue
 			}
 		case <-ctx.Done():
@@ -166,8 +172,8 @@ func (w *Pool) GetStat() (used int64, surplus int) {
 
 // ClearPool Disconnect the link at the end of the program
 func (w *Pool) ClearPool() {
-	w.mlock.Lock()
-	defer w.mlock.Unlock()
+	w.mLock.Lock()
+	defer w.mLock.Unlock()
 	w.ChannelStat = isClose
 	close(w.conns)
 	for client := range w.conns {

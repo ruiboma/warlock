@@ -3,14 +3,14 @@ package clientfactory
 import (
 	"context"
 	"errors"
-	"github.com/ruiboma/warlock/config"
 	"google.golang.org/grpc"
 	"strings"
 	"time"
+	"warlock/config"
 )
 
 var (
-	errorTarget = errors.New("Address is empty or invalid")
+	errorTarget = errors.New("address is empty or invalid")
 )
 
 // PoolFactory object
@@ -74,7 +74,6 @@ func (f *PoolFactory) MakeConn(target string, ops ...grpc.DialOption) (*grpc.Cli
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	return grpc.DialContext(ctx, target, ops...)
-
 }
 
 // InitConn Initialize the create link
