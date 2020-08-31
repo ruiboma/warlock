@@ -3,10 +3,10 @@ package clientfactory
 import (
 	"context"
 	"errors"
+	"github.com/ruiboma/warlock/config"
 	"google.golang.org/grpc"
 	"strings"
 	"time"
-	"warlock/config"
 )
 
 var (

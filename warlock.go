@@ -8,9 +8,9 @@ import (
 	"sync/atomic"
 	"time"
 
-	"warlock/config"
+	"github.com/ruiboma/warlock/config"
 
-	"warlock/clientfactory"
+	"github.com/ruiboma/warlock/clientfactory"
 
 	"google.golang.org/grpc"
 )
