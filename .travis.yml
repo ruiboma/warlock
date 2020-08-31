@@ -8,7 +8,7 @@ jobs:
       env: GO111MODULE=on
     - go: "1.12.7"
       env: GO111MODULE=on
-script: cd /warlock  go build
+script: go build
 
 branches:
   only:
