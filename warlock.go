@@ -106,7 +106,7 @@ func (w *Pool) usagelock(add int64) {
 
 // Acquire  Fishing a usable link from the pool
 func (w *Pool) Acquire() (*grpc.ClientConn, CloseFunc, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), w.Config.AcquireTimeout*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), w.Config.AcquireTimeout)
 	defer cancel()
 	for {
 		select {
