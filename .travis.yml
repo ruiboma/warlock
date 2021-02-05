@@ -13,4 +13,4 @@ script: go build
 branches:
   only:
     - master
-    - dev
+    - pre
